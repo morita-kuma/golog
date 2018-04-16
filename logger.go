@@ -2,24 +2,23 @@ package golog
 
 import (
 	"os"
+	"reflect"
 	"fmt"
 	"io"
-	"reflect"
 )
 
 // Logger
 type Logger struct {
-
 	// LoggerName
 	// Public Required
 	//
 	// It can be used as an identifier when outputting logs.
 	// If you specify an empty string, the default logger name is substituted
-	Name              string
+	Name string
 
 	// levelAppender
 	// Private Required
-	levelAppender     map[LogLevel][]Appender
+	levelAppender map[LogLevel][]Appender
 
 	// enabledMetadata
 	// Private Required
@@ -33,7 +32,7 @@ type Logger struct {
 }
 
 // doAppendIfLevelEnabled
-func (logger *Logger) doAppendIfLevelEnabled(event LogEvent, level LogLevel) {
+func (logger *Logger) doAppendIfLevelEnabled(event []byte, level LogLevel) {
 
 	// recover
 	defer func(writer io.Writer) {
@@ -42,119 +41,150 @@ func (logger *Logger) doAppendIfLevelEnabled(event LogEvent, level LogLevel) {
 		}
 	}(os.Stderr)
 
-	var metadata *LogEventMetadata
-	if logger.enabledMetadata {
-		metadata = NewLogEventMetadata(logger.Name, level, logger.metadataFormatter,4)
-	}
-
 	if appenders, ok := logger.levelAppender[level]; ok {
 		for _, appender := range appenders {
-			io.Copy(appender, event.Encode(metadata))
+			appender.Write(event)
 		}
 	}
 }
 
-func (logger *Logger) trace(logEvent LogEvent) {
-	logger.doAppendIfLevelEnabled(logEvent, LogLevel_TRACE)
-}
-
-func (logger *Logger) debug(logEvent LogEvent) {
-	logger.doAppendIfLevelEnabled(logEvent, LogLevel_DEBUG)
-}
-
-func (logger *Logger) info(logEvent LogEvent) {
-	logger.doAppendIfLevelEnabled(logEvent, LogLevel_INFO)
-}
-
-func (logger *Logger) warn(logEvent LogEvent) {
-	logger.doAppendIfLevelEnabled(logEvent, LogLevel_WARN)
-}
-
-func (logger *Logger) error(logEvent LogEvent) {
-	logger.doAppendIfLevelEnabled(logEvent, LogLevel_ERROR)
-}
-
-func (logger *Logger) fatal(logEvent LogEvent) {
-	logger.doAppendIfLevelEnabled(logEvent, LogLevel_FATAL)
-	os.Exit(1)
-}
-
 func (logger *Logger) Trace(string string) {
-	logger.trace(TextLogEvent{Event: string})
+
+	var metadata *LogEventMetadata
+	if logger.enabledMetadata {
+		metadata = NewLogEventMetadata(logger.Name, LogLevel_TRACE, logger.metadataFormatter, 4)
+	}
+	logger.doAppendIfLevelEnabled(TextLogEvent{Event: string}.Encode(metadata), LogLevel_TRACE)
 }
 
 func (logger *Logger) Debug(string string) {
-	logger.debug(TextLogEvent{Event: string})
+
+	var metadata *LogEventMetadata
+	if logger.enabledMetadata {
+		metadata = NewLogEventMetadata(logger.Name, LogLevel_TRACE, logger.metadataFormatter, 4)
+	}
+	logger.doAppendIfLevelEnabled(TextLogEvent{Event: string}.Encode(metadata), LogLevel_DEBUG)
 }
 
 func (logger *Logger) Info(string string) {
-	logger.info(TextLogEvent{Event: string})
+
+	var metadata *LogEventMetadata
+	if logger.enabledMetadata {
+		metadata = NewLogEventMetadata(logger.Name, LogLevel_TRACE, logger.metadataFormatter, 4)
+	}
+	logger.doAppendIfLevelEnabled(TextLogEvent{Event: string}.Encode(metadata), LogLevel_INFO)
 }
 
 func (logger *Logger) Warn(string string) {
-	logger.warn(TextLogEvent{Event: string})
+
+	var metadata *LogEventMetadata
+	if logger.enabledMetadata {
+		metadata = NewLogEventMetadata(logger.Name, LogLevel_WARN, logger.metadataFormatter, 4)
+	}
+	logger.doAppendIfLevelEnabled(TextLogEvent{Event: string}.Encode(metadata), LogLevel_WARN)
 }
 
 func (logger *Logger) Error(string string) {
-	logger.error(TextLogEvent{Event: string})
+
+	var metadata *LogEventMetadata
+	if logger.enabledMetadata {
+		metadata = NewLogEventMetadata(logger.Name, LogLevel_ERROR, logger.metadataFormatter, 4)
+	}
+	logger.doAppendIfLevelEnabled(TextLogEvent{Event: string}.Encode(metadata), LogLevel_ERROR)
 }
 
 func (logger *Logger) Fatal(string string) {
-	logger.fatal(TextLogEvent{Event: string})
-}
 
-func (logger *Logger) TraceS(logEvent LogEvent) {
-	logger.trace(logEvent)
-}
-
-func (logger *Logger) DebugS(logEvent LogEvent) {
-	logger.debug(logEvent)
-}
-
-func (logger *Logger) InfoS(logEvent LogEvent) {
-	logger.info(logEvent)
-}
-
-func (logger *Logger) WarnS(logEvent LogEvent) {
-	logger.warn(logEvent)
-}
-
-func (logger *Logger) ErrorS(logEvent LogEvent) {
-	logger.error(logEvent)
-}
-
-func (logger *Logger) FatalS(logEvent LogEvent) {
-	logger.fatal(logEvent)
+	var metadata *LogEventMetadata
+	if logger.enabledMetadata {
+		metadata = NewLogEventMetadata(logger.Name, LogLevel_FATAL, logger.metadataFormatter, 4)
+	}
+	logger.doAppendIfLevelEnabled(TextLogEvent{Event: string}.Encode(metadata), LogLevel_FATAL)
+	os.Exit(1)
 }
 
 // TraceF
 func (logger *Logger) TraceF(format string, args ...interface{}) {
-	logger.trace(FormatLogEvent{format: format, args: args,})
+	logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(nil), LogLevel_TRACE)
 }
 
 // DebugF
 func (logger *Logger) DebugF(format string, args ...interface{}) {
-	logger.debug(FormatLogEvent{format: format, args: args,})
+	logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(nil), LogLevel_DEBUG)
 }
 
 // InfoF
 func (logger *Logger) InfoF(format string, args ...interface{}) {
-	logger.info(FormatLogEvent{format: format, args: args,})
+	logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(nil), LogLevel_INFO)
 }
 
 // WarnF
 func (logger *Logger) WarnF(format string, args ...interface{}) {
-	logger.warn(FormatLogEvent{format: format, args: args,})
+	logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(nil), LogLevel_WARN)
 }
 
 // ErrorF
 func (logger *Logger) ErrorF(format string, args ...interface{}) {
-	logger.error(FormatLogEvent{format: format, args: args,})
+	logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(nil), LogLevel_ERROR)
 }
 
 // FatalF
 func (logger *Logger) FatalF(format string, args ...interface{}) {
-	logger.fatal(FormatLogEvent{format: format, args: args,})
+	logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(nil), LogLevel_FATAL)
+}
+
+// TraceJ
+func (logger *Logger) TraceJ(obj interface{}) {
+	logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(nil), LogLevel_TRACE)
+}
+
+// DebugJ
+func (logger *Logger) DebugJ(obj interface{}) {
+	logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(nil), LogLevel_DEBUG)
+}
+
+// InfoJ
+func (logger *Logger) InfoJ(obj interface{}) {
+	logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(nil), LogLevel_INFO)
+}
+
+// WarnJ
+func (logger *Logger) WarnJ(obj interface{}) {
+	logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(nil), LogLevel_WARN)
+}
+
+// ErrorJ
+func (logger *Logger) ErrorJ(obj interface{}) {
+	logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(nil), LogLevel_ERROR)
+}
+
+// FatalJ
+func (logger *Logger) FatalJ(obj interface{}) {
+	logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(nil), LogLevel_FATAL)
+}
+
+func (logger *Logger) TraceS(logEvent LogEvent) {
+	logger.doAppendIfLevelEnabled(logEvent.Encode(nil), LogLevel_TRACE)
+}
+
+func (logger *Logger) DebugS(logEvent LogEvent) {
+	logger.doAppendIfLevelEnabled(logEvent.Encode(nil), LogLevel_DEBUG)
+}
+
+func (logger *Logger) InfoS(logEvent LogEvent) {
+	logger.doAppendIfLevelEnabled(logEvent.Encode(nil), LogLevel_INFO)
+}
+
+func (logger *Logger) WarnS(logEvent LogEvent) {
+	logger.doAppendIfLevelEnabled(logEvent.Encode(nil), LogLevel_WARN)
+}
+
+func (logger *Logger) ErrorS(logEvent LogEvent) {
+	logger.doAppendIfLevelEnabled(logEvent.Encode(nil), LogLevel_ERROR)
+}
+
+func (logger *Logger) FatalS(logEvent LogEvent) {
+	logger.doAppendIfLevelEnabled(logEvent.Encode(nil), LogLevel_FATAL)
 }
 
 // SetAppender
@@ -184,7 +214,7 @@ func (logger *Logger) SetAppenderWithLevel(logLevel LogLevel, appender ...Append
 
 // SetLogLevel enables the specified log level
 func (logger *Logger) SetAppenderWithLevels(logLevels []LogLevel, appender ...Appender) {
-	for _,v := range logLevels {
+	for _, v := range logLevels {
 		logger.levelAppender[v] = appender
 	}
 }
@@ -213,9 +243,9 @@ func NewLogger(loggerName string, logLevel LogLevel, appender ...Appender) Logge
 	*/
 
 	return Logger{
-		Name : loggerName,
-		levelAppender:levelAppender,
-		enabledMetadata:true,
+		Name:            loggerName,
+		levelAppender:   levelAppender,
+		enabledMetadata: true,
 	}
 }
 
@@ -231,4 +261,3 @@ func getType(myvar interface{}) string {
 func NewDefaultLogger() Logger {
 	return NewLogger("defaultLogger", LogLevel_TRACE, NewDefaultConsoleAppender())
 }
-

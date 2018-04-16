@@ -108,20 +108,18 @@ func BenchmarkLogger_Json_to_buffer(b *testing.B) {
 	}
 
 	for i := 0; i< b.N; i++ {
-		logger.doAppendIfLevelEnabled(JsonLogEvent{
-			event:obj,
-		}, LogLevel_INFO)
+		logger.InfoJ(obj)
 	}
 }
 
 func BenchmarkLogger_text_to_buffer(b *testing.B) {
-	appender,_ := NewAsyncFileAppender("./log/dat2")
+	appender,_ := NewAsyncFileAppender("./log/fuga")
 	logger := NewDefaultLogger()
 	logger.SetAppender(appender)
 	logger.DisableLogEventMetadata()
 
 	for i := 0; i< b.N; i++ {
-		logger.Info("hoge")
+		logger.doAppendIfLevelEnabled(TextLogEvent{Event:"ssss"}.Encode(nil), LogLevel_INFO)
 	}
 }
 
@@ -129,7 +127,6 @@ func BenchmarkLogger_text_to_buffer2(b *testing.B) {
 	appender,_ := NewAsyncFileAppender("./log/dat2")
 	logger := NewDefaultLogger()
 	logger.SetAppender(appender)
-	logger.DisableLogEventMetadata()
 
 	for i := 0; i< b.N; i++ {
 		logger.Info("hoge")
@@ -154,17 +151,3 @@ func BenchmarkLogger_default(b *testing.B) {
 		log.Print("xxxxxxx")
 	}
 }
-
-
-/*
-func ExampleLogger_Info() {
-	logger := NewDefaultLogger()
-	logger.info(MyTextLogEvent {
-		TextLogEvent: TextLogEvent{
-			Event:"overwrite_format",
-		},
-	})
-
-	// Output:
-	// [overwrite_loglevel] [overwrite_time] [overwrite_loggername] [overwrite_sourcefile]([overwrite_sourceline]) overwrite_format
-}*/

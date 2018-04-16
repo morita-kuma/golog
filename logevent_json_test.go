@@ -3,7 +3,6 @@ package golog
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
-	"bytes"
 )
 
 func TestJsonLogEvent_Encode(t *testing.T) {
@@ -24,12 +23,10 @@ func TestJsonLogEvent_Encode(t *testing.T) {
 		metadata.TimeFormatter = func(time Time) string {
 			return "[timestamp]"
 		}
-		eventReader := logEvent.Encode(metadata)
-		buffer := new(bytes.Buffer)
-		buffer.ReadFrom(eventReader)
+		buf := logEvent.Encode(metadata)
 
-		expected := `{"EventData":{"name":"name_value","address":"address_value"},"logLevel":"[TRACE]","timestamp":"[timestamp]","sourceLine":"23","sourceFile":"logevent_json_test.go","loggerName":"defaultLogger"}`
-		assert.Equal(t, expected, buffer.String())
+		expected := `{"EventData":{"name":"name_value","address":"address_value"},"logLevel":"[TRACE]","timestamp":"[timestamp]","sourceLine":"22","sourceFile":"logevent_json_test.go","loggerName":"defaultLogger"}`
+		assert.Equal(t, expected, string(buf))
 	}()
 
 }

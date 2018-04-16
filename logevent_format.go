@@ -1,7 +1,6 @@
 package golog
 
 import (
-	"io"
 	"fmt"
 )
 
@@ -12,7 +11,12 @@ type FormatLogEvent struct {
 }
 
 // Encode implements LogEvent.Encode
-func (event FormatLogEvent) Encode(metadata *LogEventMetadata) io.Reader {
+func (event FormatLogEvent) Encode(metadata *LogEventMetadata) []byte {
 	// delegate to Text log Event
 	return TextLogEvent{Event: fmt.Sprintf(event.format, event.args...),}.Encode(metadata)
+}
+
+func (event *FormatLogEvent) Append(format string, args []interface{}) {
+
+	//return TextLogEvent{Event: fmt.Sprintf(event.format, event.args...),}.Encode(metadata)
 }

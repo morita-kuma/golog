@@ -1,37 +1,61 @@
 package golog
 
 import (
-	"io"
-	"strings"
+	"bytes"
+	"sync"
 )
 
+var bufferPool *sync.Pool
+
+func init() {
+	bufferPool = &sync.Pool{
+		New: func() interface{} {
+			return new(bytes.Buffer)
+		},
+	}
+}
+
+// TextLogEvent
 type TextLogEvent struct {
 	Event string
 }
 
 // Encode implements LogEvent.Encode
-func (textLogEvent TextLogEvent) Encode(metadata *LogEventMetadata) io.Reader {
+func (logEvent TextLogEvent) Encode(metadata *LogEventMetadata) []byte {
 	if metadata != nil {
 
-		/*
-		return strings.NewReader(fmt.Sprintf("%s %s %s %s(%s) %s",
-			metadata.GetLogLevel(),
-			metadata.GetTime(),
-			metadata.GetLoggerName(),
-			metadata.GetSourceFile(),
-			metadata.GetSourceLine(),
-			textLogEvent.Event,))
-		*/
+		data := metadata.GetLogLevel() + " " +
+			metadata.GetTime() + " " +
+			metadata.GetLoggerName() + " " +
+			/*
+			metadata.GetSourceFile() + "(" +
+				metadata.GetSourceLine() + ") " +
+			*/
+					logEvent.Event
 
 
-		return 	strings.NewReader(
-			metadata.GetLogLevel() + " " +
-				metadata.GetTime() + " " +
-					metadata.GetLoggerName() + " " +
-						metadata.GetSourceFile() + "(" + metadata.GetSourceLine() +") " +
-								textLogEvent.Event)
+		// get buffer from bufferPool
+		buffer := bufferPool.Get().(*bytes.Buffer)
+		buffer.WriteString(data)
+
+		// release
+		defer func() {
+			buffer.Reset()
+			bufferPool.Put(buffer)
+		}()
+
+		return buffer.Bytes()
 	}
 
+	// get buffer from bufferPool
+	buffer := bufferPool.Get().(*bytes.Buffer)
+	buffer.WriteString(logEvent.Event)
 
-	return strings.NewReader(textLogEvent.Event)
+	// release
+	defer func() {
+		buffer.Reset()
+		bufferPool.Put(buffer)
+	}()
+
+	return buffer.Bytes()
 }

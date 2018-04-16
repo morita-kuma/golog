@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"encoding/json"
-	"bytes"
-	"io"
 )
 
 type EventData interface{}
@@ -15,20 +13,24 @@ type JsonLogEvent struct {
 }
 
 // Encode is implementation of LogEvent.Encode
-func (jsonLogEvent JsonLogEvent) Encode(data *LogEventMetadata) io.Reader {
+func (jsonLogEvent JsonLogEvent) Encode(data *LogEventMetadata) []byte {
 
 	if data == nil {
+
+		// new event data object
 		eventData := struct {
 			EventData
 		} {
 			EventData: jsonLogEvent.event,
 		}
 
+		// encode json
 		encoded, err := json.Marshal(eventData)
 		if err != nil {
 			fmt.Fprintf(os.Stdout, err.Error())
 		}
-		return bytes.NewReader(encoded)
+
+		return encoded
 	}
 
 
@@ -56,5 +58,5 @@ func (jsonLogEvent JsonLogEvent) Encode(data *LogEventMetadata) io.Reader {
 		fmt.Fprint(os.Stdout, err.Error())
 	}
 
-	return bytes.NewReader(encoded)
+	return encoded
 }
