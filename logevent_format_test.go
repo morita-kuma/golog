@@ -1,9 +1,10 @@
 package golog
 
 import (
+	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
-/*
 func TestFormatLogEvent_Encode(t *testing.T) {
 
 	formatLogEvent := FormatLogEvent{
@@ -15,7 +16,6 @@ func TestFormatLogEvent_Encode(t *testing.T) {
 	metadata.TimeFormatter = func(time Time) string {
 		return "[timestamp]"
 	}
-	formatted :=  formatLogEvent.Encode(metadata)
+	formatted := formatLogEvent.Encode(metadata)
 	assert.Equal(t, "[TRACE] [timestamp] defaultLogger logevent_format_test.go(15) 1 2 3", string(formatted))
 }
-*/

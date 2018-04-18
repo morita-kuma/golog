@@ -1,9 +1,10 @@
 package golog
 
 import (
+	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
-/*
 func TestTextLogEvent_Encode(t *testing.T) {
 
 	func() {
@@ -16,5 +17,4 @@ func TestTextLogEvent_Encode(t *testing.T) {
 		assert.Equal(t, expected, string(buf))
 	}()
 }
-*/
 

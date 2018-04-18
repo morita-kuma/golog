@@ -7,15 +7,15 @@ import (
 
 func TestJsonLogEvent_Encode(t *testing.T) {
 
-	func () {
+	func() {
 
 		logEvent := JsonLogEvent{
-			event: struct{
-				Name string `json:"name"`
+			event: struct {
+				Name    string `json:"name"`
 				Address string `json:"address"`
 			}{
-				Name:"name_value",
-				Address:"address_value",
+				Name:    "name_value",
+				Address: "address_value",
 			},
 		}
 

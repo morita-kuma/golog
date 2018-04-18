@@ -1,23 +1,14 @@
 package golog
 
-import (
-	"testing"
-	"io"
-	"bytes"
-)
+func ExampleConsoleAppender_Write() {
 
-func TestConsoleAppender(t *testing.T) {
+	appender := NewDefaultConsoleAppender()
+	appender.Write([]byte("test1"))
+	appender.Write([]byte("test2"))
+	appender.Write([]byte("test3"))
 
-	// Append
-	func() {
-		appender := NewDefaultConsoleAppender()
-		io.Copy(appender, bytes.NewBufferString("test1"))
-		io.Copy(appender, bytes.NewBufferString("test2"))
-		io.Copy(appender, bytes.NewBufferString("test3"))
-		/*
-		expected := "test1\ntest2\ntest3\n"
-		assert.Equal(t, expected, appender)
-		*/
-	}()
-
+	// Output:
+	//test1
+	//test2
+	//test3
 }

@@ -72,7 +72,7 @@ func TestNewLogger(t *testing.T) {
 }
 
 func TestNewAsyncFileAppender(t *testing.T) {
-	appender,_ := NewAsyncFileAppender("./log/dat2")
+	appender,_ := NewBufferedFileAppender("./log/dat2")
 	logger := NewDefaultLogger()
 	logger.SetAppender(appender)
 	logger.Info("x")
@@ -94,7 +94,7 @@ func BenchmarkLogger_Info_ontime(b *testing.B) {
 }
 
 func BenchmarkLogger_Json_to_buffer(b *testing.B) {
-	appender,_ := NewAsyncFileAppender("./log/dat2")
+	appender,_ := NewBufferedFileAppender("./log/dat2")
 	logger := NewDefaultLogger()
 	logger.SetAppender(appender)
 	logger.DisableLogEventMetadata()
@@ -113,7 +113,7 @@ func BenchmarkLogger_Json_to_buffer(b *testing.B) {
 }
 
 func BenchmarkLogger_text_to_buffer(b *testing.B) {
-	appender,_ := NewAsyncFileAppender("./log/fuga")
+	appender,_ := NewBufferedFileAppender("./log/fuga")
 	logger := NewDefaultLogger()
 	logger.SetAppender(appender)
 	logger.DisableLogEventMetadata()
@@ -124,9 +124,10 @@ func BenchmarkLogger_text_to_buffer(b *testing.B) {
 }
 
 func BenchmarkLogger_text_to_buffer2(b *testing.B) {
-	appender,_ := NewAsyncFileAppender("./log/dat2")
+	appender,_ := NewBufferedFileAppender("./log/dat2")
 	logger := NewDefaultLogger()
 	logger.SetAppender(appender)
+	logger.DisableLogEventMetadata()
 
 	for i := 0; i< b.N; i++ {
 		logger.Info("hoge")
@@ -134,17 +135,21 @@ func BenchmarkLogger_text_to_buffer2(b *testing.B) {
 }
 
 func BenchmarkLogger_text_to_buffer3(b *testing.B) {
-	appender,_ := NewAsyncFileAppender("./log/dat2")
+	appender,_ := NewBufferedFileAppender("./log/dat3")
 	logger := NewDefaultLogger()
 	logger.SetAppender(appender)
-
+	logger.SetMetadataConfig(&MetadataConfig{
+		EnabledLogLevel:true,
+		EnabledLoggerName:true,
+		EnabledTime:true,
+	})
 	for i := 0; i< b.N; i++ {
 		logger.Info("hoge")
 	}
 }
 
 func BenchmarkLogger_default(b *testing.B) {
-	appender,_ := NewAsyncFileAppender("./log/dat_x")
+	appender,_ := NewBufferedFileAppender("./log/dat_x")
 	log.SetOutput(appender)
 
 	for i :=0; i<b.N; i++ {

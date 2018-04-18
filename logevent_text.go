@@ -27,10 +27,8 @@ func (logEvent TextLogEvent) Encode(metadata *LogEventMetadata) []byte {
 		data := metadata.GetLogLevel() + " " +
 			metadata.GetTime() + " " +
 			metadata.GetLoggerName() + " " +
-			/*
 			metadata.GetSourceFile() + "(" +
 				metadata.GetSourceLine() + ") " +
-			*/
 					logEvent.Event
 
 

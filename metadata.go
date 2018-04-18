@@ -1,7 +1,6 @@
 package golog
 
 import (
-	"time"
 	"strconv"
 	"runtime"
 	"path/filepath"
@@ -32,184 +31,146 @@ type LogEventMetadata struct {
 }
 
 type MetadataConfig struct {
-	EnabledLogLevel bool
-	EnabledTime bool
+	EnabledLogLevel   bool
+	EnabledTime       bool
 	EnabledSourceFile bool
 	EnabledSourceLine bool
 	EnabledLoggerName bool
 }
 
-func NewMetadataConfig() MetadataConfig {
+func NewDefaultMetadataConfig() MetadataConfig {
 	return MetadataConfig{
-		EnabledLoggerName:true,
-		EnabledLogLevel:true,
-		EnabledSourceFile:true,
-		EnabledSourceLine:true,
-		EnabledTime:true,
+		EnabledLoggerName: true,
+		EnabledLogLevel:   true,
+		EnabledSourceFile: true,
+		EnabledSourceLine: true,
+		EnabledTime:       true,
 	}
 }
 
 // GetLogLevel returns log level formatted by LogLevelFormatter
 func (metadata *LogEventMetadata) GetLogLevel() string {
+	if metadata.EnabledLogLevel == false {
+		return ""
+	}
+
 	return metadata.LogLevelFormatter(metadata.LogLevel)
 }
 
 // GetTime returns time formatted by TimeFormatter
 func (metadata *LogEventMetadata) GetTime() string {
+	if metadata.EnabledTime == false {
+		return ""
+	}
+
 	return metadata.TimeFormatter(metadata.Time)
 }
 
 // GetSourceFile returns package name formatted by SourceFileFormatter
 func (metadata *LogEventMetadata) GetSourceFile() string {
+	if metadata.EnabledSourceFile == false {
+		return ""
+	}
+
 	return metadata.SourceFileFormatter(metadata.SourceFile)
 }
 
 // GetSourceFile returns package name formatted by SourceFileFormatter
 func (metadata *LogEventMetadata) GetLoggerName() string {
+	if metadata.EnabledLoggerName == false {
+		return ""
+	}
+
 	return metadata.LoggerNameFormatter(metadata.LoggerName)
 }
 
 // GetSourceLine returns line formatted by SourceLineFormatter
 func (metadata *LogEventMetadata) GetSourceLine() string {
+	if metadata.EnabledSourceLine == false {
+		return ""
+	}
+
 	return metadata.SourceLineFormatter(metadata.SourceLine)
 }
 
+// setLoggerName
 func (metadata *LogEventMetadata) setLoggerName(loggerName string) {
-	if metadata != nil {
+	if metadata == nil {
+		return
+	}
 
-		if metadata.EnabledLoggerName {
-			metadata.LoggerName = loggerName
-		}
+	if metadata.EnabledLoggerName == true {
+		metadata.LoggerName = loggerName
 	}
 }
 
+// setLogLevel
 func (metadata *LogEventMetadata) setLogLevel(logLevel LogLevel) {
-	if metadata != nil {
+	if metadata == nil {
+		return
+	}
 
-		if metadata.EnabledLogLevel {
-			metadata.LogLevel = logLevel
-		}
+	if metadata.EnabledLogLevel == true {
+		metadata.LogLevel = logLevel
 	}
 }
 
-func (metadata *LogEventMetadata) SetSource(skip int) {
-	if metadata != nil {
+// setSource
+func (metadata *LogEventMetadata) setSource(skip int) {
+	if metadata == nil {
+		return
+	}
+
+	if metadata.EnabledSourceLine == true || metadata.EnabledSourceFile == true {
+
 		_, file, line, _ := runtime.Caller(skip)
-		_, fileName := filepath.Split(file)
 
-		if metadata.EnabledSourceFile {
-			metadata.SourceFile = fileName
-		}
+		metadata.SourceLine = line
 
-		if metadata.EnabledSourceLine {
-			metadata.SourceLine = line
-		}
+		metadata.SourceFile = file
+
+	}
+}
+
+// setTime
+func (metadata *LogEventMetadata) setTime() {
+	if metadata == nil {
+		return
+	}
+
+	if metadata.EnabledTime == true {
 	}
 }
 
 // NewLogEventMetadata
-func NewLogEventMetadata(config *MetadataConfig, formatter *MetadataFormatter) *LogEventMetadata {
+func NewLogEventMetadata(config *MetadataConfig, formatter *MetadataFormatter) LogEventMetadata {
 
-	metadata := LogEventMetadata{}
-	metadata.MetadataConfig = NewMetadataConfig()
+	metadata := LogEventMetadata{
+		MetadataFormatter: NewDefaultMetadataFormatter(),
+		MetadataConfig:NewDefaultMetadataConfig(),
+	}
+
 	if config != nil {
 		metadata.MetadataConfig = *config
 	}
 
-	metadata.MetadataFormatter = NewDefaultMetadataFormatter()
 	if formatter != nil {
 		metadata.MetadataFormatter = *formatter
 	}
 
-	if config.EnabledTime {
-		metadata.Time = time.Now().UnixNano()
-	}
-
-	return &metadata
+	return metadata
 }
 
 // NewLogEventMetadata
 func NewDefaultLogEventMetadata(loggerName string, logLevel LogLevel) *LogEventMetadata {
-	_, file, line, _ := runtime.Caller(1)
-	_, fileName := filepath.Split(file)
-
 	metadata := LogEventMetadata{
-		Time:              time.Now().UnixNano(),
-		SourceLine:        line,
-		SourceFile:        fileName,
-		LogLevel:          logLevel,
-		LoggerName:        loggerName,
 		MetadataFormatter: NewDefaultMetadataFormatter(),
+		MetadataConfig:NewDefaultMetadataConfig(),
 	}
+	metadata.setLogLevel(logLevel)
+	metadata.setLoggerName(loggerName)
+	metadata.setSource(2)
+	metadata.setTime()
+
 	return &metadata
 }
-
-
-
-
-
-
-
-
-// TimeFormatter
-type TimeFormatter = func(Time) string
-
-// LogLevelFormatter
-type LogLevelFormatter = func(level LogLevel) string
-
-// SourceLineFormatter
-type SourceLineFormatter = func(line SourceLine) string
-
-// SourceFileFormatter
-type SourceFileFormatter = func(packageName SourceFile) string
-
-// LoggerNameFormatter
-type LoggerNameFormatter = func(loggerName LoggerName) string
-
-// MetadataFormatter
-type MetadataFormatter struct {
-	LogLevelFormatter   LogLevelFormatter
-	TimeFormatter       TimeFormatter
-	SourceFileFormatter SourceFileFormatter
-	SourceLineFormatter SourceLineFormatter
-	LoggerNameFormatter LoggerNameFormatter
-}
-
-// NewDefaultMetadataFormatter
-func NewDefaultMetadataFormatter() MetadataFormatter {
-	// DefaultLogLevelFormatter
-	var defaultLogLevelFormatter = func(logLevel LogLevel) string {
-		return logLevel.String()
-	}
-
-	// DefaultTimeFormatter
-	var defaultTimeFormatter = func(time Time) string {
-		return string(time)
-	}
-
-	// DefaultLineFormatter
-	var defaultSourceLineFormatter = func(sourceLine SourceLine) string {
-		return strconv.FormatInt(int64(sourceLine), 10)
-	}
-
-	// DefaultSourceFileFormatter
-	var defaultSourceFileFormatter = func(sourceFile SourceFile) string {
-		return sourceFile
-	}
-
-	// DefaultLoggerNameFormatter
-	var defaultLoggerNameFormatter = func(loggerName LoggerName) string {
-		return loggerName
-	}
-
-	defaultLogEventMetadataFormatter := MetadataFormatter{
-		LogLevelFormatter:   defaultLogLevelFormatter,
-		TimeFormatter:       defaultTimeFormatter,
-		SourceLineFormatter: defaultSourceLineFormatter,
-		SourceFileFormatter: defaultSourceFileFormatter,
-		LoggerNameFormatter: defaultLoggerNameFormatter,
-	}
-	return defaultLogEventMetadataFormatter
-}
-
-
