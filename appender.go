@@ -2,7 +2,5 @@ package golog
 
 import "io"
 
-// Appender
-type Appender interface {
-	io.Writer
-}
+
+type Appender = io.WriteCloser

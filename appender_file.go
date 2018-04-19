@@ -27,14 +27,10 @@ func (appender *FileAppender) Close() error {
 	}
 
 	// Close File
-	if err := appender.file.Close(); err != nil {
-		return err
-	}
-
-	return nil
+	return appender.file.Close()
 }
 
-// NewFileAppender
+// NewFileAppender returns new FileAppender
 func NewFileAppender(fileName string) (fileAppender *FileAppender, err error) {
 	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModeAppend)
 	if err != nil {
@@ -53,7 +49,7 @@ type BufferedFileAppender struct {
 	mu             *sync.Mutex
 }
 
-// NewBufferedFileAppender
+// NewBufferedFileAppender returns new BufferedFileAppender
 func NewBufferedFileAppender(fileName string) (asyncFileAppender *BufferedFileAppender, err error) {
 	file, err := os.Create(fileName)
 	if err != nil {
@@ -80,9 +76,13 @@ func (appender *BufferedFileAppender) ReadFrom(r io.Reader) (n int64, err error)
 }
 
 // Close implements io.Closer
-func (appender *BufferedFileAppender) Close() {
+func (appender *BufferedFileAppender) Close() error {
 	appender.mu.Lock()
 	defer appender.mu.Unlock()
-	appender.bufferedWriter.Flush()
-	appender.file.Close()
+
+	if err := appender.bufferedWriter.Flush(); err != nil {
+		return err
+	}
+
+	return appender.file.Close()
 }

@@ -8,10 +8,12 @@ type Destination string
 const Destination_STDOUT = "STDOUT"
 const Destination_STDERR = "STDERR"
 
+// ConsoleAppender
 type ConsoleAppender struct {
 	destination Destination
 }
 
+// Write implements io.Writer
 func (appender ConsoleAppender) Write(data []byte) (n int, err error) {
 	data = append(data, []byte("\n")...)
 
@@ -28,10 +30,18 @@ func (appender ConsoleAppender) Write(data []byte) (n int, err error) {
 	return 0,nil
 }
 
+// Close implements io.Closer
+func (appender ConsoleAppender) Close() error {
+	return nil
+}
+
+// NewDefaultConsoleAppender returns new ConsoleAppender
+// default io.writer is used to os.Stdout
 func NewDefaultConsoleAppender() ConsoleAppender {
 	return NewConsoleAppender(Destination_STDOUT)
 }
 
+// NewConsoleAppender returns new ConsoleAppender
 func NewConsoleAppender(destination Destination) ConsoleAppender {
 	return ConsoleAppender{
 		destination: destination,

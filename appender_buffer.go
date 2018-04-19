@@ -31,7 +31,12 @@ func (appender *ByteBufferAppender) Write(data []byte) (n int, err error) {
 	return 0, nil
 }
 
-// String is implementation of Appender interface
+// Close implements io.Closer
+func (appender *ByteBufferAppender) Close() error {
+	return nil
+}
+
+// String implements stringer
 func (appender *ByteBufferAppender) String() string {
 
 	if appender != nil {

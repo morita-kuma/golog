@@ -1,9 +1,7 @@
 package golog
 
 import (
-	"strconv"
 	"runtime"
-	"path/filepath"
 )
 
 // SourceLine
@@ -30,6 +28,7 @@ type LogEventMetadata struct {
 	MetadataConfig
 }
 
+// MetadataConfig
 type MetadataConfig struct {
 	IsEnabledLogLevel   bool
 	IsEnabledTime       bool
@@ -38,6 +37,7 @@ type MetadataConfig struct {
 	IsEnabledLoggerName bool
 }
 
+// NewDefaultMetadataConfig
 func NewDefaultMetadataConfig() MetadataConfig {
 	return MetadataConfig{
 		IsEnabledLoggerName: true,
@@ -49,6 +49,7 @@ func NewDefaultMetadataConfig() MetadataConfig {
 }
 
 // GetLogLevel returns log level formatted by LogLevelFormatter
+// if metadata config is disabled, returns empty string
 func (metadata *LogEventMetadata) GetLogLevel() string {
 	if metadata.IsEnabledLogLevel == false {
 		return ""
@@ -58,6 +59,7 @@ func (metadata *LogEventMetadata) GetLogLevel() string {
 }
 
 // GetTime returns time formatted by TimeFormatter
+// if metadata config is disabled, returns empty string
 func (metadata *LogEventMetadata) GetTime() string {
 	if metadata.IsEnabledTime == false {
 		return ""
@@ -67,6 +69,7 @@ func (metadata *LogEventMetadata) GetTime() string {
 }
 
 // GetSourceFile returns package name formatted by SourceFileFormatter
+// if metadata config is disabled, returns empty string
 func (metadata *LogEventMetadata) GetSourceFile() string {
 	if metadata.IsEnabledSourceFile == false {
 		return ""
@@ -76,6 +79,7 @@ func (metadata *LogEventMetadata) GetSourceFile() string {
 }
 
 // GetSourceFile returns package name formatted by SourceFileFormatter
+// if metadata config is disabled, returns empty string
 func (metadata *LogEventMetadata) GetLoggerName() string {
 	if metadata.IsEnabledLoggerName == false {
 		return ""
@@ -85,6 +89,7 @@ func (metadata *LogEventMetadata) GetLoggerName() string {
 }
 
 // GetSourceLine returns line formatted by SourceLineFormatter
+// if metadata config is disabled, returns empty string
 func (metadata *LogEventMetadata) GetSourceLine() string {
 	if metadata.IsEnabledSourceLine == false {
 		return ""
