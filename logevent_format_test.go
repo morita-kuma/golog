@@ -12,7 +12,7 @@ func TestFormatLogEvent_Encode(t *testing.T) {
 		args:   []interface{}{1, 2, 3},
 	}
 
-	metadata := NewDefaultLogEventMetadata("defaultLogger", LogLevel_TRACE)
+	metadata := newDefaultLogEventMetadata("defaultLogger", LogLevel_TRACE)
 	metadata.TimeFormatter = func(time Time) string {
 		return "[timestamp]"
 	}

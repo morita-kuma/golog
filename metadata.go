@@ -31,26 +31,26 @@ type LogEventMetadata struct {
 }
 
 type MetadataConfig struct {
-	EnabledLogLevel   bool
-	EnabledTime       bool
-	EnabledSourceFile bool
-	EnabledSourceLine bool
-	EnabledLoggerName bool
+	IsEnabledLogLevel   bool
+	IsEnabledTime       bool
+	IsEnabledSourceFile bool
+	IsEnabledSourceLine bool
+	IsEnabledLoggerName bool
 }
 
 func NewDefaultMetadataConfig() MetadataConfig {
 	return MetadataConfig{
-		EnabledLoggerName: true,
-		EnabledLogLevel:   true,
-		EnabledSourceFile: true,
-		EnabledSourceLine: true,
-		EnabledTime:       true,
+		IsEnabledLoggerName: true,
+		IsEnabledLogLevel:   true,
+		IsEnabledSourceFile: true,
+		IsEnabledSourceLine: true,
+		IsEnabledTime:       true,
 	}
 }
 
 // GetLogLevel returns log level formatted by LogLevelFormatter
 func (metadata *LogEventMetadata) GetLogLevel() string {
-	if metadata.EnabledLogLevel == false {
+	if metadata.IsEnabledLogLevel == false {
 		return ""
 	}
 
@@ -59,7 +59,7 @@ func (metadata *LogEventMetadata) GetLogLevel() string {
 
 // GetTime returns time formatted by TimeFormatter
 func (metadata *LogEventMetadata) GetTime() string {
-	if metadata.EnabledTime == false {
+	if metadata.IsEnabledTime == false {
 		return ""
 	}
 
@@ -68,7 +68,7 @@ func (metadata *LogEventMetadata) GetTime() string {
 
 // GetSourceFile returns package name formatted by SourceFileFormatter
 func (metadata *LogEventMetadata) GetSourceFile() string {
-	if metadata.EnabledSourceFile == false {
+	if metadata.IsEnabledSourceFile == false {
 		return ""
 	}
 
@@ -77,7 +77,7 @@ func (metadata *LogEventMetadata) GetSourceFile() string {
 
 // GetSourceFile returns package name formatted by SourceFileFormatter
 func (metadata *LogEventMetadata) GetLoggerName() string {
-	if metadata.EnabledLoggerName == false {
+	if metadata.IsEnabledLoggerName == false {
 		return ""
 	}
 
@@ -86,7 +86,7 @@ func (metadata *LogEventMetadata) GetLoggerName() string {
 
 // GetSourceLine returns line formatted by SourceLineFormatter
 func (metadata *LogEventMetadata) GetSourceLine() string {
-	if metadata.EnabledSourceLine == false {
+	if metadata.IsEnabledSourceLine == false {
 		return ""
 	}
 
@@ -99,7 +99,7 @@ func (metadata *LogEventMetadata) setLoggerName(loggerName string) {
 		return
 	}
 
-	if metadata.EnabledLoggerName == true {
+	if metadata.IsEnabledLoggerName == true {
 		metadata.LoggerName = loggerName
 	}
 }
@@ -110,7 +110,7 @@ func (metadata *LogEventMetadata) setLogLevel(logLevel LogLevel) {
 		return
 	}
 
-	if metadata.EnabledLogLevel == true {
+	if metadata.IsEnabledLogLevel == true {
 		metadata.LogLevel = logLevel
 	}
 }
@@ -121,7 +121,7 @@ func (metadata *LogEventMetadata) setSource(skip int) {
 		return
 	}
 
-	if metadata.EnabledSourceLine == true || metadata.EnabledSourceFile == true {
+	if metadata.IsEnabledSourceLine == true || metadata.IsEnabledSourceFile == true {
 
 		_, file, line, _ := runtime.Caller(skip)
 
@@ -138,7 +138,7 @@ func (metadata *LogEventMetadata) setTime() {
 		return
 	}
 
-	if metadata.EnabledTime == true {
+	if metadata.IsEnabledTime == true {
 	}
 }
 
@@ -161,8 +161,8 @@ func NewLogEventMetadata(config *MetadataConfig, formatter *MetadataFormatter) L
 	return metadata
 }
 
-// NewLogEventMetadata
-func NewDefaultLogEventMetadata(loggerName string, logLevel LogLevel) *LogEventMetadata {
+// newLogEventMetadata
+func newDefaultLogEventMetadata(loggerName string, logLevel LogLevel) *LogEventMetadata {
 	metadata := LogEventMetadata{
 		MetadataFormatter: NewDefaultMetadataFormatter(),
 		MetadataConfig:NewDefaultMetadataConfig(),

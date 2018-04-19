@@ -19,7 +19,7 @@ func TestJsonLogEvent_Encode(t *testing.T) {
 			},
 		}
 
-		metadata := NewDefaultLogEventMetadata("defaultLogger", LogLevel_TRACE)
+		metadata := newDefaultLogEventMetadata("defaultLogger", LogLevel_TRACE)
 		metadata.TimeFormatter = func(time Time) string {
 			return "[timestamp]"
 		}

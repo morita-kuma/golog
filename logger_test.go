@@ -139,9 +139,9 @@ func BenchmarkLogger_text_to_buffer3(b *testing.B) {
 	logger := NewDefaultLogger()
 	logger.SetAppender(appender)
 	logger.SetMetadataConfig(&MetadataConfig{
-		EnabledLogLevel:true,
-		EnabledLoggerName:true,
-		EnabledTime:true,
+		IsEnabledLogLevel:   true,
+		IsEnabledLoggerName: true,
+		IsEnabledTime:       true,
 	})
 	for i := 0; i< b.N; i++ {
 		logger.Info("hoge")

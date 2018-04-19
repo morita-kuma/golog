@@ -8,7 +8,7 @@ import (
 func TestTextLogEvent_Encode(t *testing.T) {
 
 	func() {
-		metadata := NewDefaultLogEventMetadata("defaultLogger", LogLevel_TRACE)
+		metadata := newDefaultLogEventMetadata("defaultLogger", LogLevel_TRACE)
 		metadata.TimeFormatter = func(time Time) string {
 			return "[timestamp]"
 		}
