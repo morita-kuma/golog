@@ -349,7 +349,7 @@ func (logger *Logger) Close() error {
 		for _, appender := range v {
 			err := appender.Close()
 			if err != nil {
-				fmt.Fprintf(os.Stdout, err.Error())
+				fmt.Fprintf(os.Stderr, "close appender is failed , error : %s\n",  err.Error())
 			}
 		}
 	}
@@ -360,6 +360,15 @@ func (logger *Logger) Close() error {
 func NewLogger(loggerName string, logLevel LogLevel, appender ...Appender) Logger {
 	levelAppender := map[LogLevel][]Appender{}
 	logLevels := NewDefaultLevelFilter().DoFilter(logLevel)
+
+	if len(logLevels) == 0{
+		fmt.Fprintln(os.Stderr, "Warn: no levels is specified")
+	}
+
+	if len(appender) == 0 {
+		fmt.Fprintln(os.Stderr, "Warn: no appender is specified")
+	}
+
 	for _, logLevel := range logLevels {
 		levelAppender[logLevel] = appender
 	}

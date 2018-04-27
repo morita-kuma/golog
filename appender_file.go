@@ -11,6 +11,8 @@ import (
 type FileAppender struct {
 	file         *os.File
 	buffedWriter *bufio.Writer
+
+	activated bool
 }
 
 // Write implements io.Writer
@@ -21,9 +23,20 @@ func (appender *FileAppender) Write(data []byte) (n int, err error) {
 // Close implements io.Closer
 func (appender *FileAppender) Close() error {
 
-	// Flush Buffer
-	if err := appender.buffedWriter.Flush(); err != nil {
-		return err
+	if appender.activated {
+
+		// Flush Buffer
+		if err := appender.buffedWriter.Flush(); err != nil {
+
+			return err
+		}
+
+		if err := appender.file.Close(); err != nil {
+
+			return err
+		}
+
+		appender.activated = false
 	}
 
 	// Close File
@@ -39,6 +52,7 @@ func NewFileAppender(fileName string) (fileAppender *FileAppender, err error) {
 
 	return &FileAppender{
 		buffedWriter: bufio.NewWriterSize(f, 4096),
+		activated:    true,
 	}, nil
 }
 
