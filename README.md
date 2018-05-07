@@ -156,7 +156,7 @@ logger.Info("message")
 
 Result:
 ```
-[INFO] 2018-05-07T12:14:20+09:00 defaultLogger goadnw.go(204) message
+[INFO] 2018-05-07T12:14:20+09:00 defaultLogger test.go(204) message
 ```
 
 ## 4.2. BufferAppender
@@ -174,7 +174,7 @@ fmt.Print(appender.String())
 
 Result:
 ```
-[INFO] 2018-05-07T12:17:52+09:00 defaultLogger goadnw.go(231) message
+[INFO] 2018-05-07T12:17:52+09:00 defaultLogger test.go(231) message
 ```
 
 ## 4.3. FileAppender
@@ -195,9 +195,9 @@ logger.Close()
 
 Result:
 ```
-[INFO] 2018-05-07T12:19:00+09:00 defaultLogger goadnw.go(215) message1
-[INFO] 2018-05-07T12:19:00+09:00 defaultLogger goadnw.go(215) message2
-[INFO] 2018-05-07T12:19:00+09:00 defaultLogger goadnw.go(215) message3
+[INFO] 2018-05-07T12:19:00+09:00 defaultLogger test.go(215) message1
+[INFO] 2018-05-07T12:19:00+09:00 defaultLogger test.go(215) message2
+[INFO] 2018-05-07T12:19:00+09:00 defaultLogger test.go(215) message3
 ```
 
 # 5. CustomLogAppender
@@ -217,12 +217,12 @@ Library内で生成されるログのMetadataで、LogEventで自由に整形す
 | :--- | :--- | :--- | :--- |
 | LogLevel | string | ログレベル | \[INFO\] |
 | Time | int64 | unixtime seconds | 2018-05-07T12:19:00+09:00 |
-| SourceFile | string | ログを出力したファイル名 | goadnw.go |
+| SourceFile | string | ログを出力したファイル名 | test.go |
 | SourceLine | int | ログを出力したソースのLine |  (100) |
 | LoggerName | string | Logger生成時に指定したロガー名 | defaultLogger |
 
 ```
-[INFO] 2018-05-07T12:19:00+09:00 defaultLogger goadnw.go(215) message3
+[INFO] 2018-05-07T12:19:00+09:00 defaultLogger test.go(215) message3
 ```
 
 ## 6.1. Metadataを無効にする
@@ -259,7 +259,7 @@ logger.Info("message")
 
 Result:
 ```
- 2018-05-07T12:37:19+09:00  goadnw.go(250) message
+ 2018-05-07T12:37:19+09:00  test.go(250) message
 ```
 
 # 6.3. Metadataのデフォルトフォーマットを上書きする
@@ -281,7 +281,7 @@ logger.Info("message")
 
 Result:
 ```
-[INFO] 1525665335 defaultLogger goadnw.go(273) message
+[INFO] 1525665335 defaultLogger test.go(273) message
 ```
 
 
