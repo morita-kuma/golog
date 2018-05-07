@@ -6,6 +6,21 @@ import (
 	"io"
 )
 
+var warnLogger Logger
+
+func init() {
+	warnLogger = Logger {
+		Name: "GoLogLogger",
+		levelAppender:map[LogLevel][]Appender {
+			LogLevel_WARN: {
+				NewConsoleAppender(Destination_STDERR),
+			},
+		},
+		enabledMetadata:true,
+	}
+}
+
+
 // Logger
 type Logger struct {
 	// LoggerName
@@ -350,7 +365,7 @@ func (logger *Logger) Close() error {
 		for _, appender := range v {
 			err := appender.Close()
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "close appender is failed , error : %s\n",  err.Error())
+				warnLogger.WarnF("close appender is failed , error : %s", err.Error())
 			}
 		}
 	}
@@ -362,12 +377,12 @@ func NewLogger(loggerName string, logLevel LogLevel, appender ...Appender) Logge
 	levelAppender := map[LogLevel][]Appender{}
 	logLevels := NewDefaultLevelFilter().DoFilter(logLevel)
 
-	if len(logLevels) == 0{
-		fmt.Fprintln(os.Stderr, "Warn: no levels is specified")
+	if len(logLevels) == 0 {
+		warnLogger.Warn("no levels is specified")
 	}
 
 	if len(appender) == 0 {
-		fmt.Fprintln(os.Stderr, "Warn: no appender is specified")
+		warnLogger.Warn("no appender is specified")
 	}
 
 	for _, logLevel := range logLevels {

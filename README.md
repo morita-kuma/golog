@@ -132,21 +132,158 @@ Result:
 ```
 
 # 4. LogAppender
-LogAppenderは、LogEventの出力先を実装します。 
+LogAppenderは、LogEventの出力先を実装します。
+1つのLogEventに対して複数の出力先が必要な場合は、以下のように実装することも可能です。
+
+```
+logger := golog.NewDefaultLogger()
+logger.SetAppender(
+	golog.NewDefaultConsoleAppender(),
+	golog.NewByteBufferAppender(), )
+logger.Info("message")
+```
+
 
 ## 4.1. ConsoleAppender
+LogEventを標準出力もしくは標準エラー出力に出力します。
+
+Example:
+```
+logger := golog.NewDefaultLogger()
+logger.SetAppender(golog.NewDefaultConsoleAppender())
+logger.Info("message")
+```
+
+Result:
+```
+[INFO] 2018-05-07T12:14:20+09:00 defaultLogger goadnw.go(204) message
+```
+
 ## 4.2. BufferAppender
+LogEventをバッファに出力します。 LogEventのテストなどに利用してください。
+バッファの内容は、String()で取得することができます。
+
+Example:
+```
+logger := golog.NewDefaultLogger()
+appender := golog.NewByteBufferAppender()
+logger.SetAppender(appender)
+logger.Info("message")
+fmt.Print(appender.String())
+```
+
+Result:
+```
+[INFO] 2018-05-07T12:17:52+09:00 defaultLogger goadnw.go(231) message
+```
+
 ## 4.3. FileAppender
-## 4.4. BufferedFileAppender
+LogEventをファイルに出力します。内部で4096Byteをデフォルトでバッファし、容量超えた場合にFlushを行います。
+また、バッファの内容はAppenderもしくはLoggerのCloserによってFlushされます。
+アプリケーションの終了時やpanicリカバリーのタイミングでcloseを実行し、バッファが確実に出力されるように実装してください。
+
+Example:
+```
+logger := golog.NewDefaultLogger()
+appender, _ := golog.NewFileAppender("./log/dat2")
+logger.SetAppender(appender)
+logger.Info("message1")
+logger.Info("message2")
+logger.Info("message3")
+logger.Close()
+```
+
+Result:
+```
+[INFO] 2018-05-07T12:19:00+09:00 defaultLogger goadnw.go(215) message1
+[INFO] 2018-05-07T12:19:00+09:00 defaultLogger goadnw.go(215) message2
+[INFO] 2018-05-07T12:19:00+09:00 defaultLogger goadnw.go(215) message3
+```
 
 # 5. CustomLogAppender
-ログアペンダーは、golangのio.WriteCloserのエイリアスです。サポートされているログアペンダーを拡張したい場合や、独自仕様を利用したい場合はこのインターフェースを実装してください。
+LogAppenderは、golangのio.WriteCloserのエイリアスとして実装されています。
+従って、このインターフェースを満たす既存の実装はそのまま利用することができます。
+加えて、サポートされているLogAppenderを拡張したい場合や、独自仕様を利用したい場合はこのインターフェースを実装してください。
 ```
 type Appender = io.WriteCloser
 ```
 
 
-# 5. Metadata
-# 6. MetadataFormatter
+# 6. Metadata
+Library内で生成されるログのMetadataで、LogEventで自由に整形することができます。
+サポートされているのは、以下の通りです。
 
-# 6. Performance
+| metadata | type | expla | example |
+| :--- | :--- | :--- | :--- |
+| LogLevel | string | ログレベル | \[INFO\] |
+| Time | int64 | unixtime seconds | 2018-05-07T12:19:00+09:00 |
+| SourceFile | string | ログを出力したファイル名 | goadnw.go |
+| SourceLine | int | ログを出力したソースのLine |  (100) |
+| LoggerName | string | Logger生成時に指定したロガー名 | defaultLogger |
+
+```
+[INFO] 2018-05-07T12:19:00+09:00 defaultLogger goadnw.go(215) message3
+```
+
+## 6.1. Metadataを無効にする
+Metadataが不要な場合や、Loggerのperformanceを向上させたい場合は以下のように無効にしてください。
+
+Example:
+```
+logger := golog.NewDefaultLogger()
+logger.SetAppender(golog.NewDefaultConsoleAppender())
+logger.DisableLogEventMetadata()
+logger.Info("message")
+```
+Result:
+```
+message
+```
+
+## 6.2. 指定のMetadataを無効にする
+指定のMetadataのみ必要な場合は、以下のように設定してください。
+
+Example:
+```
+logger := golog.NewDefaultLogger()
+logger.SetAppender(golog.NewDefaultConsoleAppender())
+logger.SetMetadataConfig(&golog.MetadataConfig{
+	IsEnabledLogLevel:   false,
+	IsEnabledTime:       true,
+	IsEnabledSourceFile: true,
+	IsEnabledSourceLine: true,
+	IsEnabledLoggerName: false,
+})
+logger.Info("message")
+```
+
+Result:
+```
+ 2018-05-07T12:37:19+09:00  goadnw.go(250) message
+```
+
+# 6.3. Metadataのデフォルトフォーマットを上書きする
+Metadataのfieldがどのようにレイアウトされるかは、LogEventの実装依存ですが、
+フォーマットは何も指定しない場合はdefaultFormatterが使用されます。
+フォーマッターを上書きしたい場合には、以下のように実装してください。
+
+Example: ISO3166 -> UnixTime
+```
+logger := golog.NewDefaultLogger()
+logger.SetAppender(golog.NewDefaultConsoleAppender())
+formatter := golog.NewDefaultMetadataFormatter()
+formatter.TimeFormatter = func(unixTime golog.UnixTime) string {
+	return strconv.FormatInt(int64(unixTime),10)
+}
+logger.SetMetadataFormatter(&formatter)
+logger.Info("message")
+```
+
+Result:
+```
+[INFO] 1525665335 defaultLogger goadnw.go(273) message
+```
+
+
+
+# 7. Performance
