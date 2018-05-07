@@ -59,7 +59,8 @@ func (logger *Logger) newMetadata(level LogLevel) LogEventMetadata {
 	metadata = NewLogEventMetadata(logger.metadataConfig, logger.metadataFormatter)
 	metadata.setLogLevel(level)
 	metadata.setLoggerName(logger.Name)
-	metadata.setSource(5)
+	metadata.setSource(4)
+	metadata.setTime()
 	return metadata
 }
 

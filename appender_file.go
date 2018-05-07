@@ -45,7 +45,7 @@ func (appender *FileAppender) Close() error {
 
 // NewFileAppender returns new FileAppender
 func NewFileAppender(fileName string) (fileAppender *FileAppender, err error) {
-	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModeAppend)
+	f, err := os.Create(fileName)
 	if err != nil {
 		return nil, err
 	}

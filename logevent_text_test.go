@@ -9,7 +9,7 @@ func TestTextLogEvent_Encode(t *testing.T) {
 
 	func() {
 		metadata := newDefaultLogEventMetadata("defaultLogger", LogLevel_TRACE)
-		metadata.TimeFormatter = func(time Time) string {
+		metadata.TimeFormatter = func(time UnixTime) string {
 			return "[timestamp]"
 		}
 		expected := `[TRACE] [timestamp] defaultLogger logevent_text_test.go(11) test`

@@ -20,7 +20,7 @@ func TestJsonLogEvent_Encode(t *testing.T) {
 		}
 
 		metadata := newDefaultLogEventMetadata("defaultLogger", LogLevel_TRACE)
-		metadata.TimeFormatter = func(time Time) string {
+		metadata.TimeFormatter = func(time UnixTime) string {
 			return "[timestamp]"
 		}
 		buf := logEvent.Encode(metadata)

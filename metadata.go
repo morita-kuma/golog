@@ -2,6 +2,7 @@ package golog
 
 import (
 	"runtime"
+	"time"
 )
 
 // SourceLine
@@ -13,13 +14,13 @@ type SourceFile = string
 // LoggerName
 type LoggerName = string
 
-// Time
-type Time = int64
+// UnixTime
+type UnixTime = int64
 
 // LogEventMetadata
 type LogEventMetadata struct {
 	LogLevel   LogLevel
-	Time       Time
+	UnixTime   UnixTime
 	SourceFile SourceFile
 	SourceLine SourceLine
 	LoggerName LoggerName
@@ -65,7 +66,7 @@ func (metadata *LogEventMetadata) GetTime() string {
 		return ""
 	}
 
-	return metadata.TimeFormatter(metadata.Time)
+	return metadata.TimeFormatter(metadata.UnixTime)
 }
 
 // GetSourceFile returns package name formatted by SourceFileFormatter
@@ -144,6 +145,7 @@ func (metadata *LogEventMetadata) setTime() {
 	}
 
 	if metadata.IsEnabledTime == true {
+		metadata.UnixTime = time.Now().Unix()
 	}
 }
 

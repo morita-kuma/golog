@@ -3,10 +3,12 @@ package golog
 import (
 	"strconv"
 	"path/filepath"
+
+	"time"
 )
 
 // TimeFormatter
-type TimeFormatter = func(Time) string
+type TimeFormatter = func(UnixTime) string
 
 // LogLevelFormatter
 type LogLevelFormatter = func(level LogLevel) string
@@ -37,8 +39,8 @@ func NewDefaultMetadataFormatter() MetadataFormatter {
 	}
 
 	// DefaultTimeFormatter
-	var defaultTimeFormatter = func(time Time) string {
-		return strconv.FormatInt(time, 10)
+	var defaultTimeFormatter = func(unixTime UnixTime) string {
+		return time.Unix(unixTime, 0).Format(time.RFC3339)
 	}
 
 	// DefaultLineFormatter
