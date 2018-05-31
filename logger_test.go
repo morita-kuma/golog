@@ -52,7 +52,7 @@ func TestNewLogger(t *testing.T) {
 		logger := NewLogger("testLogger", LogLevel_TRACE)
 		appender := NewByteBufferAppender()
 		logger.SetAppender(appender)
-		logger.InfoS(JsonLogEvent{
+		logger.SInfo(JsonLogEvent{
 			event: struct{
 				Name string `json:"name"`
 				Address string `json:"address"`
@@ -67,7 +67,7 @@ func TestNewLogger(t *testing.T) {
 	func () {
 		logger := NewLogger("testLogger",LogLevel_TRACE)
 		logger.SetAppender(NewDefaultConsoleAppender(), NewDefaultConsoleAppender())
-		logger.TraceF("value = %v", 10)
+		logger.Tracef("value = %v", 10)
 	}()
 }
 
@@ -108,7 +108,7 @@ func BenchmarkLogger_Json_to_buffer(b *testing.B) {
 	}
 
 	for i := 0; i< b.N; i++ {
-		logger.InfoJ(obj)
+		logger.Infoj(obj)
 	}
 }
 

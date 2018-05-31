@@ -141,8 +141,8 @@ func (logger *Logger) Fatal(string string) {
 	os.Exit(1)
 }
 
-// TraceF encodes according to format specifier and calls specified appender to print.
-func (logger *Logger) TraceF(format string, args ...interface{}) {
+// Tracef encodes according to format specifier and calls specified appender to print.
+func (logger *Logger) Tracef(format string, args ...interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_TRACE)
 		logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(&metadata), LogLevel_TRACE)
@@ -151,8 +151,8 @@ func (logger *Logger) TraceF(format string, args ...interface{}) {
 	}
 }
 
-// DebugF encodes according to format specifier and calls specified appender to print.
-func (logger *Logger) DebugF(format string, args ...interface{}) {
+// Debugf encodes according to format specifier and calls specified appender to print.
+func (logger *Logger) Debugf(format string, args ...interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_DEBUG)
 		logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(&metadata), LogLevel_DEBUG)
@@ -161,8 +161,8 @@ func (logger *Logger) DebugF(format string, args ...interface{}) {
 	}
 }
 
-// InfoF encodes according to format specifier and calls specified appender to print.
-func (logger *Logger) InfoF(format string, args ...interface{}) {
+// Infof encodes according to format specifier and calls specified appender to print.
+func (logger *Logger) Infof(format string, args ...interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_INFO)
 		logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(&metadata), LogLevel_INFO)
@@ -171,8 +171,8 @@ func (logger *Logger) InfoF(format string, args ...interface{}) {
 	}
 }
 
-// WarnF encodes according to format specifier and calls specified appender to print.
-func (logger *Logger) WarnF(format string, args ...interface{}) {
+// Warnf encodes according to format specifier and calls specified appender to print.
+func (logger *Logger) Warnf(format string, args ...interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_WARN)
 		logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(&metadata), LogLevel_WARN)
@@ -181,8 +181,8 @@ func (logger *Logger) WarnF(format string, args ...interface{}) {
 	}
 }
 
-// ErrorF encodes according to format specifier and calls specified appender to print.
-func (logger *Logger) ErrorF(format string, args ...interface{}) {
+// Errorf encodes according to format specifier and calls specified appender to print.
+func (logger *Logger) Errorf(format string, args ...interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_ERROR)
 		logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(&metadata), LogLevel_ERROR)
@@ -191,8 +191,8 @@ func (logger *Logger) ErrorF(format string, args ...interface{}) {
 	}
 }
 
-// FatalF encodes according to format specifier and calls specified appender to print.
-func (logger *Logger) FatalF(format string, args ...interface{}) {
+// Fatalf encodes according to format specifier and calls specified appender to print.
+func (logger *Logger) Fatalf(format string, args ...interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_FATAL)
 		logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(&metadata), LogLevel_FATAL)
@@ -201,8 +201,8 @@ func (logger *Logger) FatalF(format string, args ...interface{}) {
 	}
 }
 
-// TraceJ encodes as Json binary and calls specified appender to print.
-func (logger *Logger) TraceJ(obj interface{}) {
+// Tracej encodes as Json binary and calls specified appender to print.
+func (logger *Logger) Tracej(obj interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_TRACE)
 		logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(&metadata), LogLevel_TRACE)
@@ -211,8 +211,8 @@ func (logger *Logger) TraceJ(obj interface{}) {
 	}
 }
 
-// DebugJ encodes as Json binary and calls specified appender to print.
-func (logger *Logger) DebugJ(obj interface{}) {
+// Debugj encodes as Json binary and calls specified appender to print.
+func (logger *Logger) Debugj(obj interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_DEBUG)
 		logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(&metadata), LogLevel_DEBUG)
@@ -221,8 +221,8 @@ func (logger *Logger) DebugJ(obj interface{}) {
 	}
 }
 
-// InfoJ encodes as Json binary and calls specified appender to print.
-func (logger *Logger) InfoJ(obj interface{}) {
+// Infoj encodes as Json binary and calls specified appender to print.
+func (logger *Logger) Infoj(obj interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_INFO)
 		logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(&metadata), LogLevel_INFO)
@@ -231,8 +231,8 @@ func (logger *Logger) InfoJ(obj interface{}) {
 	}
 }
 
-// WarnJ encodes as Json binary and calls specified appender to print.
-func (logger *Logger) WarnJ(obj interface{}) {
+// Warnj encodes as Json binary and calls specified appender to print.
+func (logger *Logger) Warnj(obj interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_WARN)
 		logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(&metadata), LogLevel_WARN)
@@ -241,8 +241,8 @@ func (logger *Logger) WarnJ(obj interface{}) {
 	}
 }
 
-// ErrorJ encodes as Json binary and calls specified appender to print.
-func (logger *Logger) ErrorJ(obj interface{}) {
+// Errorj encodes as Json binary and calls specified appender to print.
+func (logger *Logger) Errorj(obj interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_ERROR)
 		logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(&metadata), LogLevel_ERROR)
@@ -251,8 +251,8 @@ func (logger *Logger) ErrorJ(obj interface{}) {
 	}
 }
 
-// FatalJ encodes as Json binary and calls specified appender to print.
-func (logger *Logger) FatalJ(obj interface{}) {
+// Fatalj encodes as Json binary and calls specified appender to print.
+func (logger *Logger) Fatalj(obj interface{}) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_FATAL)
 		logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(&metadata), LogLevel_FATAL)
@@ -261,8 +261,8 @@ func (logger *Logger) FatalJ(obj interface{}) {
 	}
 }
 
-// TraceS encodes as user defined logEvent and calls specified appender to print it.
-func (logger *Logger) TraceS(logEvent LogEvent) {
+// STrace encodes as user defined logEvent and calls specified appender to print it.
+func (logger *Logger) STrace(logEvent LogEvent) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_TRACE)
 		logger.doAppendIfLevelEnabled(logEvent.Encode(&metadata), LogLevel_TRACE)
@@ -271,8 +271,8 @@ func (logger *Logger) TraceS(logEvent LogEvent) {
 	}
 }
 
-// DebugS encodes as user defined logEvent and calls specified appender to print it.
-func (logger *Logger) DebugS(logEvent LogEvent) {
+// SDebug encodes as user defined logEvent and calls specified appender to print it.
+func (logger *Logger) SDebug(logEvent LogEvent) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_DEBUG)
 		logger.doAppendIfLevelEnabled(logEvent.Encode(&metadata), LogLevel_DEBUG)
@@ -281,8 +281,8 @@ func (logger *Logger) DebugS(logEvent LogEvent) {
 	}
 }
 
-// InfoS encodes as user defined logEvent and calls specified appender to print it.
-func (logger *Logger) InfoS(logEvent LogEvent) {
+// SInfo encodes as user defined logEvent and calls specified appender to print it.
+func (logger *Logger) SInfo(logEvent LogEvent) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_INFO)
 		logger.doAppendIfLevelEnabled(logEvent.Encode(&metadata), LogLevel_INFO)
@@ -291,8 +291,8 @@ func (logger *Logger) InfoS(logEvent LogEvent) {
 	}
 }
 
-// WarnS encodes as user defined logEvent and calls specified appender to print it.
-func (logger *Logger) WarnS(logEvent LogEvent) {
+// SWarn encodes as user defined logEvent and calls specified appender to print it.
+func (logger *Logger) SWarn(logEvent LogEvent) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_WARN)
 		logger.doAppendIfLevelEnabled(logEvent.Encode(&metadata), LogLevel_WARN)
@@ -301,8 +301,8 @@ func (logger *Logger) WarnS(logEvent LogEvent) {
 	}
 }
 
-// ErrorS encodes as user defined logEvent and calls specified appender to print it.
-func (logger *Logger) ErrorS(logEvent LogEvent) {
+// SError encodes as user defined logEvent and calls specified appender to print it.
+func (logger *Logger) SError(logEvent LogEvent) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_ERROR)
 		logger.doAppendIfLevelEnabled(logEvent.Encode(&metadata), LogLevel_ERROR)
@@ -311,8 +311,8 @@ func (logger *Logger) ErrorS(logEvent LogEvent) {
 	}
 }
 
-// FatalS encodes as user defined logEvent and calls specified appender to print it.
-func (logger *Logger) FatalS(logEvent LogEvent) {
+// SFatal encodes as user defined logEvent and calls specified appender to print it.
+func (logger *Logger) SFatal(logEvent LogEvent) {
 	if logger.enabledMetadata {
 		metadata := logger.newMetadata(LogLevel_FATAL)
 		logger.doAppendIfLevelEnabled(logEvent.Encode(&metadata), LogLevel_FATAL)
@@ -365,7 +365,7 @@ func (logger *Logger) Close() error {
 		for _, appender := range v {
 			err := appender.Close()
 			if err != nil {
-				warnLogger.WarnF("close appender is failed , error : %s", err.Error())
+				warnLogger.Warnf("close appender is failed , error : %s", err.Error())
 			}
 		}
 	}

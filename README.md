@@ -21,7 +21,7 @@ logger.Info("message")
 ```
 logger := golog.NewDefaultLogger()
 logger.SetAppender(golog.NewDefaultConsoleAppender())
-logger.InfoF("%s", "message")
+logger.Infof("%s", "message")
 ```
 
 
@@ -37,7 +37,7 @@ message := struct{
     Name:"name_value",
 	Address:"address_value",
 }
-logger.InfoJ(message)
+logger.Infof(message)
 ```
 
 
@@ -76,7 +76,7 @@ logger.SetAppender(golog.NewDefaultConsoleAppender())
 logEvent := CustomLogEvent{
 	fields:[]string{"a", "b", "c"},
 }
-logger.InfoS(logEvent)
+logger.SInfo(logEvent)
 ```
 
 Result:
