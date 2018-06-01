@@ -138,6 +138,7 @@ func (logger *Logger) Fatal(string string) {
 		logger.doAppendIfLevelEnabled(TextLogEvent{Event: string}.Encode(nil), LogLevel_FATAL)
 	}
 
+	logger.Close()
 	os.Exit(1)
 }
 
@@ -199,6 +200,9 @@ func (logger *Logger) Fatalf(format string, args ...interface{}) {
 	} else {
 		logger.doAppendIfLevelEnabled(FormatLogEvent{format: format, args: args,}.Encode(nil), LogLevel_FATAL)
 	}
+
+	logger.Close()
+	os.Exit(1)
 }
 
 // Tracej encodes as Json binary and calls specified appender to print.
@@ -259,6 +263,9 @@ func (logger *Logger) Fatalj(obj interface{}) {
 	} else {
 		logger.doAppendIfLevelEnabled(JsonLogEvent{event: obj,}.Encode(nil), LogLevel_FATAL)
 	}
+
+	logger.Close()
+	os.Exit(1)
 }
 
 // STrace encodes as user defined logEvent and calls specified appender to print it.
@@ -319,6 +326,9 @@ func (logger *Logger) SFatal(logEvent LogEvent) {
 	} else {
 		logger.doAppendIfLevelEnabled(logEvent.Encode(nil), LogLevel_FATAL)
 	}
+
+	logger.Close()
+	os.Exit(1)
 }
 
 // SetAppender
