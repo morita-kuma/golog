@@ -1,10 +1,10 @@
 package golog
 
 import (
-	"bufio"
 	"os"
-	"io"
 	"sync"
+
+	"github.com/moli9ma/golog/internal/bufio"
 )
 
 // defaultBufferSize
@@ -27,7 +27,7 @@ func NewFileAppender(fileName string) (asyncFileAppender *FileAppender, err erro
 
 	return &FileAppender{
 		file:           file,
-		bufferedWriter: bufio.NewWriterSize(file, defaultBufferSize),
+		bufferedWriter: bufio.NewWriter(file, bufio.WithBufferSize(defaultBufferSize)),
 		mu:             new(sync.Mutex),
 		activated:      true,
 	}, nil
@@ -47,7 +47,7 @@ func NewFileAppenderWithBufferSize(fileName string, bufferSize int) (asyncFileAp
 
 	return &FileAppender{
 		file:           file,
-		bufferedWriter: bufio.NewWriterSize(file, size),
+		bufferedWriter: bufio.NewWriter(file, bufio.WithBufferSize(size)),
 		mu:             new(sync.Mutex),
 		activated:      true,
 	}, nil
@@ -59,11 +59,6 @@ func (appender *FileAppender) Write(data []byte) (n int, err error) {
 	defer appender.mu.Unlock()
 	data = append(data, '\n')
 	return appender.bufferedWriter.Write(data)
-}
-
-// ReadFrom implements io.ReadFrom
-func (appender *FileAppender) ReadFrom(r io.Reader) (n int64, err error) {
-	return appender.bufferedWriter.ReadFrom(r)
 }
 
 // Close implements io.Closer
