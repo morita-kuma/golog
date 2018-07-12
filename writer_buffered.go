@@ -1,37 +1,37 @@
-package bufio
+package golog
 
 import (
 	"io"
 )
 
-var defaultBufferSize = 4096
+var defaultBufferedWriterSize = 4096
 
-// Writer implements buffering for an io.Writer object.
-// If an error occurs writing to a Writer, no more data will be
+// bufferedWriter implements buffering for an io.bufferedWriter object.
+// If an error occurs writing to a bufferedWriter, no more data will be
 // accepted and all subsequent writes, and Flush, will return the error.
 // After all data has been written, the client should call the
 // Flush method to guarantee all data has been forwarded to
-// the underlying io.Writer.
-type Writer struct {
+// the underlying io.bufferedWriter.
+type bufferedWriter struct {
 	err    error
 	buffer []byte
 	writer io.Writer
 	numberOfWrittenBytes int
 }
 
-type WriterOption func(writer *Writer)
+type writerOption func(writer *bufferedWriter)
 
-// NewWriterSize returns a new Writer whose buffer has at least the specified
-// size. If the argument io.Writer is already a Writer with large enough
-// size, it returns the underlying Writer.
-func NewWriter(writer io.Writer, writerOptions ...WriterOption) *Writer {
+// NewWriterSize returns a new bufferedWriter whose buffer has at least the specified
+// size. If the argument io.bufferedWriter is already a bufferedWriter with large enough
+// size, it returns the underlying bufferedWriter.
+func newBufferedWriter(writer io.Writer, writerOptions ...writerOption) *bufferedWriter {
 
-	if bufferedWriter, ok := writer.(*Writer); ok {
+	if bufferedWriter, ok := writer.(*bufferedWriter); ok {
 		return bufferedWriter
 	}
 
-	bufferedWriter := &Writer{
-		buffer: make([]byte, defaultBufferSize),
+	bufferedWriter := &bufferedWriter{
+		buffer: make([]byte, defaultBufferedWriterSize),
 		writer: writer,
 	}
 
@@ -42,10 +42,10 @@ func NewWriter(writer io.Writer, writerOptions ...WriterOption) *Writer {
 	return bufferedWriter
 }
 
-func WithBufferSize(size int) WriterOption {
-	return func(writer *Writer) {
+func withBufferSize(size int) writerOption {
+	return func(writer *bufferedWriter) {
 		if size <= 0 {
-			writer.buffer = make([]byte, defaultBufferSize)
+			writer.buffer = make([]byte, defaultBufferedWriterSize)
 			return
 		}
 		writer.buffer = make([]byte, size)
@@ -56,7 +56,7 @@ func WithBufferSize(size int) WriterOption {
 // It returns the number of bytes written.
 // If nn < len(p), it also returns an error explaining
 // why the write is short.
-func (w *Writer) Write(data []byte) (n int, err error) {
+func (w *bufferedWriter) Write(data []byte) (n int, err error) {
 
 	if w.hasError() {
 		return n, w.err
@@ -80,7 +80,7 @@ func (w *Writer) Write(data []byte) (n int, err error) {
 }
 
 // Flush writes any buffered data to the underlying io.Writer.
-func (w *Writer) Flush() error {
+func (w *bufferedWriter) Flush() error {
 
 	if w.hasError() {
 		return w.err
@@ -108,20 +108,20 @@ func (w *Writer) Flush() error {
 	return nil
 }
 
-func (w *Writer) capacity() int {
+func (w *bufferedWriter) capacity() int {
 	return cap(w.buffer)
 }
 
 // buffered returns the number of bytes that have been written into the current buffer.
-func (w *Writer) buffered() int {
+func (w *bufferedWriter) buffered() int {
 	return w.numberOfWrittenBytes
 }
 
 // available returns how many bytes are unused in the buffer.
-func (w *Writer) available() int {
+func (w *bufferedWriter) available() int {
 	return w.capacity() - w.buffered()
 }
 
-func (w *Writer) hasError() bool {
+func (w *bufferedWriter) hasError() bool {
 	return w.err != nil
 }
