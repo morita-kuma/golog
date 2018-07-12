@@ -4,7 +4,6 @@ import (
 	"os"
 	"sync"
 
-	"github.com/moli9ma/golog/internal/bufio"
 )
 
 // defaultBufferSize
@@ -13,7 +12,7 @@ const defaultBufferSize = 4096
 // FileAppender
 type FileAppender struct {
 	file           *os.File
-	bufferedWriter *bufio.Writer
+	bufferedWriter *bufferedWriter
 	mu             *sync.Mutex
 	activated      bool
 }
@@ -27,7 +26,7 @@ func NewFileAppender(fileName string) (asyncFileAppender *FileAppender, err erro
 
 	return &FileAppender{
 		file:           file,
-		bufferedWriter: bufio.NewWriter(file, bufio.WithBufferSize(defaultBufferSize)),
+		bufferedWriter: newBufferedWriter(file, withBufferSize(defaultBufferSize)),
 		mu:             new(sync.Mutex),
 		activated:      true,
 	}, nil
@@ -47,7 +46,7 @@ func NewFileAppenderWithBufferSize(fileName string, bufferSize int) (asyncFileAp
 
 	return &FileAppender{
 		file:           file,
-		bufferedWriter: bufio.NewWriter(file, bufio.WithBufferSize(size)),
+		bufferedWriter: newBufferedWriter(file, withBufferSize(size)),
 		mu:             new(sync.Mutex),
 		activated:      true,
 	}, nil
